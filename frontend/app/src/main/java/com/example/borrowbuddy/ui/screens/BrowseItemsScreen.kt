@@ -19,10 +19,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.borrowbuddy.ui.viewmodel.HomeViewModel
+import com.example.borrowbuddy.model.Item
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BrowseItemsScreen(navController: NavController) {
+fun BrowseItemsScreen(navController: NavController, viewModel: HomeViewModel = viewModel()) {
+    val itemsState by viewModel.items.collectAsState()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -70,19 +74,19 @@ fun BrowseItemsScreen(navController: NavController) {
 
         // Items List
         LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            items(10) {
-                BrowseItemCardUI(navController)
+            items(itemsState) { item ->
+                BrowseItemCardUI(navController, item)
             }
         }
     }
 }
 
 @Composable
-fun BrowseItemCardUI(navController: NavController) {
+fun BrowseItemCardUI(navController: NavController, item: Item) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { navController.navigate("item_detail") },
+            .clickable { navController.navigate("item_detail/${item.id}") },
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -99,18 +103,22 @@ fun BrowseItemCardUI(navController: NavController) {
             
             Column {
                 Text(
-                    "Engineering Drawing Kit",
+                    item.title,
                     fontWeight = FontWeight.Bold, 
                     fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.onBackground
                 )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text("Distance: 200m away", fontSize = 12.sp, color = Color.Gray)
+                if (item.description.isNotBlank()) {
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(item.description, fontSize = 12.sp, color = Color.Gray, maxLines = 2)
+                }
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Box(modifier = Modifier.size(8.dp).background(Color(0xFF4CAF50), CircleShape))
+                    val color = if (item.isAvailable) Color(0xFF4CAF50) else Color.Red
+                    val text = if (item.isAvailable) "Available" else "Busy"
+                    Box(modifier = Modifier.size(8.dp).background(color, CircleShape))
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text("Available", fontSize = 12.sp, color = Color(0xFF4CAF50))
+                    Text(text, fontSize = 12.sp, color = color)
                 }
             }
         }

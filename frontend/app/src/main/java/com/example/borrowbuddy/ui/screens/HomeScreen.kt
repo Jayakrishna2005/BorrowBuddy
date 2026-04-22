@@ -25,11 +25,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.borrowbuddy.ui.viewmodel.HomeViewModel
+import com.example.borrowbuddy.util.SessionManager
+import com.example.borrowbuddy.model.Item
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen(navController: NavController, viewModel: HomeViewModel = viewModel()) {
     val scrollState = rememberScrollState()
+    val context = LocalContext.current
+    val session = remember { SessionManager(context) }
+    val user = session.getUser()
+    val itemsState by viewModel.items.collectAsState()
     
     Column(
         modifier = Modifier
@@ -45,7 +53,7 @@ fun HomeScreen(navController: NavController) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
-                Text("Hi, User 👋", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
+                Text("Hi, ${user?.fullName ?: "User"} 👋", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
                 Text("What do you need today?", fontSize = 14.sp, color = Color.Gray)
             }
             Box(
@@ -129,19 +137,19 @@ fun HomeScreen(navController: NavController) {
         }
         Spacer(modifier = Modifier.height(12.dp))
         LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-            items(5) { index ->
-                ItemCardUI(navController)
+            items(itemsState) { item ->
+                ItemCardUI(navController, item)
             }
         }
     }
 }
 
 @Composable
-fun ItemCardUI(navController: NavController) {
+fun ItemCardUI(navController: NavController, item: Item) {
     Card(
         modifier = Modifier
             .width(160.dp)
-            .clickable { navController.navigate("item_detail") },
+            .clickable { navController.navigate("item_detail/${item.id}") },
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -154,12 +162,14 @@ fun ItemCardUI(navController: NavController) {
                     .background(Color(0xFFF4F6FA), RoundedCornerShape(12.dp))
             )
             Spacer(modifier = Modifier.height(8.dp))
-            Text("Scientific Calculator", fontWeight = FontWeight.Bold, fontSize = 14.sp, maxLines = 1)
+            Text(item.title, fontWeight = FontWeight.Bold, fontSize = 14.sp, maxLines = 1)
             Spacer(modifier = Modifier.height(4.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(modifier = Modifier.size(8.dp).background(Color(0xFF4CAF50), CircleShape))
+                val color = if (item.isAvailable) Color(0xFF4CAF50) else Color.Red
+                val text = if (item.isAvailable) "Available" else "Busy"
+                Box(modifier = Modifier.size(8.dp).background(color, CircleShape))
                 Spacer(modifier = Modifier.width(6.dp))
-                Text("Available", fontSize = 12.sp, color = Color(0xFF4CAF50))
+                Text(text, fontSize = 12.sp, color = color)
             }
         }
     }

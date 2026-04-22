@@ -15,7 +15,21 @@ interface BorrowBuddyApi {
 
     @POST("api/v1/auth/login")
     suspend fun login(@Body request: LoginRequest): User
+
+    @POST("api/v1/requests")
+    suspend fun createBooking(@Body booking: BookingRequest): BookingResponse
 }
+
+data class BookingRequest(
+    val item: String, // UUID
+    val borrower: String, // UUID
+    val status: String = "PENDING"
+)
+
+data class BookingResponse(
+    val id: String,
+    val status: String
+)
 
 data class LoginRequest(
     val name: String,

@@ -19,9 +19,35 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.borrowbuddy.ui.viewmodel.HomeViewModel
+import com.example.borrowbuddy.util.SessionManager
+import com.example.borrowbuddy.network.BorrowBuddyApi
+import com.example.borrowbuddy.network.BookingRequest
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import kotlinx.coroutines.launch
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
 
 @Composable
-fun ItemDetailScreen(navController: NavController) {
+fun ItemDetailScreen(navController: NavController, itemId: String?, viewModel: HomeViewModel = viewModel()) {
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    val session = remember { SessionManager(context) }
+    val user = session.getUser()
+    
+    val items by viewModel.items.collectAsState()
+    val item = items.find { it.id.toString() == itemId }
+    
+    val api = remember {
+        Retrofit.Builder()
+            .baseUrl("http://10.0.2.2:8080/") 
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(BorrowBuddyApi::class.java)
+    }
+
     val scrollState = rememberScrollState()
     
     val buttonGradient = Brush.horizontalGradient(
@@ -45,7 +71,7 @@ fun ItemDetailScreen(navController: NavController) {
         Column(modifier = Modifier.padding(24.dp)) {
             // Title & Status
             Text(
-                text = "Scientific Calculator (Casio FX-991EX)",
+                text = item?.title ?: "Item Details",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground
@@ -54,18 +80,19 @@ fun ItemDetailScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(12.dp))
             
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(modifier = Modifier.size(10.dp).background(Color(0xFF4CAF50), CircleShape))
+                val isAvail = item?.isAvailable ?: false
+                val color = if (isAvail) Color(0xFF4CAF50) else Color.Red
+                Box(modifier = Modifier.size(10.dp).background(color, CircleShape))
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Available Now", fontSize = 14.sp, color = Color(0xFF4CAF50), fontWeight = FontWeight.Medium)
+                Text(if (isAvail) "Available Now" else "Not Available", fontSize = 14.sp, color = color, fontWeight = FontWeight.Medium)
             }
             
             Spacer(modifier = Modifier.height(24.dp))
             
-            // Description
             Text("Description", fontSize = 18.sp, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                "Hardly used scientific calculator. Perfect for engineering mathematics. Please return it within 3 days as I will need it for my exams.",
+                item?.description ?: "No description available.",
                 color = Color.Gray,
                 fontSize = 14.sp,
                 lineHeight = 20.sp
@@ -99,7 +126,23 @@ fun ItemDetailScreen(navController: NavController) {
             
             // Request Button
             Button(
-                onClick = { navController.navigate("chat") },
+                onClick = { 
+                    if (item != null && user != null) {
+                        coroutineScope.launch {
+                            try {
+                                api.createBooking(BookingRequest(
+                                    item = item.id.toString(),
+                                    borrower = user.id.toString()
+                                ))
+                                Toast.makeText(context, "Request Sent!", Toast.LENGTH_SHORT).show()
+                                navController.navigate("chat")
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                                Toast.makeText(context, "Request failed", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),

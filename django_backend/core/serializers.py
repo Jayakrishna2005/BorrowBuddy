@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Item, Category
+from .models import User, Item, Category, Booking
 
 class UserSerializer(serializers.ModelSerializer):
     fullName = serializers.CharField(source='full_name', required=False)
@@ -18,3 +18,8 @@ class ItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
         fields = ['id', 'title', 'description', 'condition', 'isAvailable']
+
+class BookingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Booking
+        fields = '__all__'

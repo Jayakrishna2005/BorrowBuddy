@@ -20,8 +20,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
+import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavController
+import com.example.borrowbuddy.util.SessionManager
+
 @Composable
 fun ProfileScreen(navController: NavController) {
+    val context = LocalContext.current
+    val session = remember { SessionManager(context) }
+    val user = session.getUser()
+    
     val scrollState = rememberScrollState()
 
     Column(
@@ -44,8 +52,8 @@ fun ProfileScreen(navController: NavController) {
             }
             Spacer(modifier = Modifier.width(16.dp))
             Column {
-                Text("Jane Doe", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
-                Text("Computer Science, 3rd Year", fontSize = 14.sp, color = Color.Gray)
+                Text(user?.fullName ?: "Guest", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
+                Text(user?.email ?: "No Email", fontSize = 14.sp, color = Color.Gray)
             }
         }
 
@@ -56,11 +64,11 @@ fun ProfileScreen(navController: NavController) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            StatCard("Shared", "15", Modifier.weight(1f))
+            StatCard("Shared", user?.itemsLent?.toString() ?: "0", Modifier.weight(1f))
             Spacer(modifier = Modifier.width(12.dp))
-            StatCard("Borrowed", "8", Modifier.weight(1f))
+            StatCard("Borrowed", user?.itemsBorrowed?.toString() ?: "0", Modifier.weight(1f))
             Spacer(modifier = Modifier.width(12.dp))
-            StatCard("Trust", "4.9★", Modifier.weight(1f))
+            StatCard("Trust", "${user?.trustScore ?: 0}★", Modifier.weight(1f))
         }
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -80,6 +88,7 @@ fun ProfileScreen(navController: NavController) {
         // Logout Button
         Button(
             onClick = {
+                session.clearSession()
                 navController.navigate("login") {
                     popUpTo(0)
                 }

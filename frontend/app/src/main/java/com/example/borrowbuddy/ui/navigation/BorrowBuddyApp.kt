@@ -97,7 +97,10 @@ fun BorrowBuddyApp() {
             composable("add_item") { AddItemScreen(navController) }
             composable("requests") { RequestsScreen(navController) }
             composable("profile") { ProfileScreen(navController) }
-            composable("item_detail") { ItemDetailScreen(navController) }
+            composable("item_detail/{itemId}") { backStackEntry ->
+                val itemId = backStackEntry.arguments?.getString("itemId")
+                ItemDetailScreen(navController, itemId)
+            }
             composable("chat") { ChatScreen(navController) }
             composable("badges") { BadgesScreen(navController) }
         }

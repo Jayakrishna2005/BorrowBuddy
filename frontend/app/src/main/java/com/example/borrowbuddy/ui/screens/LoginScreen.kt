@@ -23,6 +23,7 @@ import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.borrowbuddy.ui.viewmodel.AuthViewModel
 import com.example.borrowbuddy.ui.viewmodel.AuthState
+import com.example.borrowbuddy.util.SessionManager
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,6 +42,8 @@ fun LoginScreen(navController: NavController, viewModel: AuthViewModel = viewMod
     LaunchedEffect(authState) {
         when (authState) {
             is AuthState.Success -> {
+                val session = SessionManager(context)
+                session.saveUser((authState as AuthState.Success).user)
                 Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
                 navController.navigate("home") {
                     popUpTo("login") { inclusive = true }

@@ -21,9 +21,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import kotlinx.coroutines.delay
+import androidx.compose.ui.platform.LocalContext
+import com.example.borrowbuddy.util.SessionManager
 
 @Composable
 fun SplashScreen(navController: NavController) {
+    val context = LocalContext.current
     val alphaAnim = remember { Animatable(0f) }
 
     LaunchedEffect(key1 = true) {
@@ -32,8 +35,16 @@ fun SplashScreen(navController: NavController) {
             animationSpec = tween(durationMillis = 1500)
         )
         delay(1000)
-        navController.navigate("login") {
-            popUpTo("splash") { inclusive = true }
+        val session = SessionManager(context)
+        val user = session.getUser()
+        if (user != null) {
+            navController.navigate("home") {
+                popUpTo("splash") { inclusive = true }
+            }
+        } else {
+            navController.navigate("login") {
+                popUpTo("splash") { inclusive = true }
+            }
         }
     }
 

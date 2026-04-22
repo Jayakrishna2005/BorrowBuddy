@@ -24,3 +24,11 @@ class Item(models.Model):
     condition = models.CharField(max_length=255)
     is_available = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+class Booking(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    borrower = models.ForeignKey(User, on_delete=models.CASCADE)
+    status = models.CharField(max_length=50, default='PENDING') # PENDING, APPROVED, REJECTED, COMPLETED
+    request_date = models.DateTimeField(auto_now_add=True)
+    return_date = models.DateTimeField(null=True, blank=True)
