@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -31,6 +32,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,11 +41,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
+    'channels',
     'core',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'django.middleware.gzip.GZipMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -71,10 +75,25 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'myproject.wsgi.application'
+ASGI_APPLICATION = 'myproject.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
 
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
+
+import socket
+
+try:
+    # Resolve the Supabase hostname to an IP to bypass libpq DNS resolution issues on Windows
+    supabase_host = socket.getaddrinfo('db.pagwpnnirfljymcxeses.supabase.co', None, socket.AF_INET6)[0][4][0]
+except Exception:
+    supabase_host = 'db.pagwpnnirfljymcxeses.supabase.co'
 
 DATABASES = {
     'default': {
@@ -82,8 +101,9 @@ DATABASES = {
         'NAME': 'postgres',
         'USER': 'postgres',
         'PASSWORD': '+!Q2vZzsH*6&%Ve',
-        'HOST': 'db.pagwpnnirfljymcxeses.supabase.co',
+        'HOST': supabase_host,
         'PORT': '5432',
+        'CONN_MAX_AGE': 600,
     }
 }
 
@@ -125,5 +145,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 APPEND_SLASH = False

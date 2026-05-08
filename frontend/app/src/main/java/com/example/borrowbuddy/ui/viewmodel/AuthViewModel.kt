@@ -21,14 +21,7 @@ sealed class AuthState {
 
 class AuthViewModel : ViewModel() {
 
-    private val api: BorrowBuddyApi by lazy {
-        Retrofit.Builder()
-            // We use 10.0.2.2 to point to localhost from Android Emulator
-            .baseUrl("http://10.0.2.2:8080/") 
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(BorrowBuddyApi::class.java)
-    }
+    private val api: BorrowBuddyApi get() = BorrowBuddyApi.create()
 
     private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
     val authState: StateFlow<AuthState> = _authState.asStateFlow()

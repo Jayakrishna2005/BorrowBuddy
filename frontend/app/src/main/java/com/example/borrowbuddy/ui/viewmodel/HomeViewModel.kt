@@ -13,28 +13,30 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class HomeViewModel : ViewModel() {
 
-    private val api: BorrowBuddyApi by lazy {
-        Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:8080/") // Android Emulator localhost
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(BorrowBuddyApi::class.java)
-    }
+    private val api: BorrowBuddyApi get() = BorrowBuddyApi.create()
 
     private val _items = MutableStateFlow<List<Item>>(emptyList())
     val items: StateFlow<List<Item>> = _items.asStateFlow()
 
-    init {
-        loadItems()
-    }
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
     fun loadItems() {
         viewModelScope.launch {
+            // Only show loader if we have NO items. 
+            // If we have items, load in the background for an 'instant' feel.
+            if (_items.value.isEmpty()) {
+                _isLoading.value = true
+            }
             try {
-                _items.value = api.getAvailableItems()
+                val newItems = api.getItems()
+                if (newItems != _items.value) {
+                    _items.value = newItems
+                }
             } catch (e: Exception) {
-                // Handle error
                 e.printStackTrace()
+            } finally {
+                _isLoading.value = false
             }
         }
     }

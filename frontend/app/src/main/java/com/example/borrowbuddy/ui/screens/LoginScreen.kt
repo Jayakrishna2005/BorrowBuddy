@@ -1,6 +1,7 @@
 package com.example.borrowbuddy.ui.screens
 
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,7 +14,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -24,15 +27,17 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.borrowbuddy.ui.viewmodel.AuthViewModel
 import com.example.borrowbuddy.ui.viewmodel.AuthState
 import com.example.borrowbuddy.util.SessionManager
+import com.example.borow_buddy_frontend.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(navController: NavController, viewModel: AuthViewModel = viewModel()) {
+    val context = LocalContext.current
+    val session = remember { SessionManager(context) }
+    
     var name by remember { mutableStateOf("") }
     var regNumber by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
-    
-    val context = LocalContext.current
     val authState by viewModel.authState.collectAsState()
     
     val buttonGradient = Brush.horizontalGradient(
@@ -60,25 +65,20 @@ fun LoginScreen(navController: NavController, viewModel: AuthViewModel = viewMod
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(Color.White)
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // Illustration placeholder
-        Box(
+        // Illustration
+        Image(
+            painter = painterResource(id = R.drawable.login_illustration),
+            contentDescription = "Students swapping items",
             modifier = Modifier
-                .size(150.dp)
-                .background(Color(0xFFE0E7FF), shape = RoundedCornerShape(16.dp)),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = Icons.Default.Group,
-                contentDescription = "Students swapping items",
-                tint = Color(0xFF6C5CE7),
-                modifier = Modifier.size(80.dp)
-            )
-        }
+                .size(240.dp)
+                .padding(bottom = 8.dp),
+            contentScale = ContentScale.Fit
+        )
 
         Spacer(modifier = Modifier.height(32.dp))
 
@@ -86,7 +86,7 @@ fun LoginScreen(navController: NavController, viewModel: AuthViewModel = viewMod
             text = "Welcome to BorrowBuddy",
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground
+            color = Color.Black
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -94,7 +94,7 @@ fun LoginScreen(navController: NavController, viewModel: AuthViewModel = viewMod
         Text(
             text = "Enter your details to continue.",
             fontSize = 14.sp,
-            color = Color.Gray,
+            color = Color.DarkGray,
             modifier = Modifier.padding(horizontal = 16.dp),
             textAlign = androidx.compose.ui.text.style.TextAlign.Center
         )
@@ -109,8 +109,12 @@ fun LoginScreen(navController: NavController, viewModel: AuthViewModel = viewMod
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = MaterialTheme.colorScheme.primary,
-                unfocusedBorderColor = Color.Gray
+                focusedBorderColor = Color(0xFF6C5CE7),
+                unfocusedBorderColor = Color.Gray,
+                focusedTextColor = Color.Black,
+                unfocusedTextColor = Color.Black,
+                focusedLabelColor = Color(0xFF6C5CE7),
+                unfocusedLabelColor = Color.Gray
             ),
             singleLine = true
         )
@@ -130,8 +134,12 @@ fun LoginScreen(navController: NavController, viewModel: AuthViewModel = viewMod
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = MaterialTheme.colorScheme.primary,
-                unfocusedBorderColor = Color.Gray
+                focusedBorderColor = Color(0xFF6C5CE7),
+                unfocusedBorderColor = Color.Gray,
+                focusedTextColor = Color.Black,
+                unfocusedTextColor = Color.Black,
+                focusedLabelColor = Color(0xFF6C5CE7),
+                unfocusedLabelColor = Color.Gray
             ),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
             singleLine = true
@@ -147,8 +155,12 @@ fun LoginScreen(navController: NavController, viewModel: AuthViewModel = viewMod
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = MaterialTheme.colorScheme.primary,
-                unfocusedBorderColor = Color.Gray
+                focusedBorderColor = Color(0xFF6C5CE7),
+                unfocusedBorderColor = Color.Gray,
+                focusedTextColor = Color.Black,
+                unfocusedTextColor = Color.Black,
+                focusedLabelColor = Color(0xFF6C5CE7),
+                unfocusedLabelColor = Color.Gray
             ),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             singleLine = true
@@ -165,6 +177,7 @@ fun LoginScreen(navController: NavController, viewModel: AuthViewModel = viewMod
                     } else if (!email.trim().endsWith(".sse@saveetha.com", ignoreCase = true)) {
                         Toast.makeText(context, "Email must end with .sse@saveetha.com", Toast.LENGTH_SHORT).show()
                     } else {
+                        // The serverIp bar is removed, so we just use the existing base URL from SessionManager
                         viewModel.login(name, regNumber, email)
                     }
                 } else {
