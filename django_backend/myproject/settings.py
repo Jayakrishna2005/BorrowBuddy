@@ -149,5 +149,5 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'borrowbuddy099@gmail.com'
-EMAIL_HOST_PASSWORD = 'idjjxgmcgzzfrzcm'
+EMAIL_HOST_PASSWORD = 'thonyvvcclskrpeo'
 DEFAULT_FROM_EMAIL = 'BorrowBuddy <borrowbuddy099@gmail.com>'
