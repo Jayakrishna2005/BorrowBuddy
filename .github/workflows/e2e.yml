@@ -1,0 +1,292 @@
+name: e2e.yml
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  selenium-tests:
+    name: Selenium - Website Tests (300)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install selenium openpyxl requests webdriver-manager
+
+      - name: Run Selenium E2E Tests
+        run: python automation/tests/run_selenium.py
+        env:
+          BASE_URL: https://jayakrishna2005.github.io/BorrowBuddy
+
+      - name: Upload Selenium Report Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: selenium-reports
+          path: |
+            automation/reports/Selenium_Test_Report.xlsx
+            automation/reports/selenium-results.json
+          retention-days: 5
+
+  appium-tests:
+    name: Appium - Android Tests (300)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install openpyxl requests
+
+      - name: Run Appium Android Tests
+        run: python automation/tests/run_appium.py
+
+      - name: Upload Appium Report Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: appium-reports
+          path: |
+            automation/reports/Appium_Test_Report.xlsx
+            automation/reports/appium-results.json
+          retention-days: 5
+
+  unit-tests:
+    name: Unit Tests - API (300)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install openpyxl requests
+
+      - name: Run API Unit Tests
+        run: python automation/tests/run_unit.py
+
+      - name: Upload Unit Report Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-reports
+          path: |
+            automation/reports/Unit_Test_Report.xlsx
+            automation/reports/unit-results.json
+          retention-days: 5
+
+  validation-tests:
+    name: Validation Tests (300)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install openpyxl requests
+
+      - name: Run Layout Validation Tests
+        run: python automation/tests/run_validation.py
+
+      - name: Upload Validation Report Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-reports
+          path: |
+            automation/reports/Validation_Test_Report.xlsx
+            automation/reports/validation-results.json
+          retention-days: 5
+
+  deployment-status:
+    name: Deployment Status (300)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install openpyxl requests
+
+      - name: Run Deployment Verification
+        run: python automation/tests/run_deployment.py
+
+      - name: Upload Deployment Report Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployment-reports
+          path: |
+            automation/reports/Deployment_Test_Report.xlsx
+            automation/reports/deployment-results.json
+          retention-days: 5
+
+  load-testing:
+    name: Load Testing - Performance (300)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install openpyxl requests
+
+      - name: Run Load Testing
+        run: python automation/tests/run_load.py
+
+      - name: Upload Load Report Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: load-reports
+          path: |
+            automation/reports/Load_Test_Report.xlsx
+            automation/reports/load-results.json
+          retention-days: 5
+
+  compile-and-deploy:
+    name: Compile Master Report & Deploy
+    runs-on: ubuntu-latest
+    needs: [selenium-tests, appium-tests, unit-tests, validation-tests, deployment-status, load-testing]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download Selenium Reports
+        uses: actions/download-artifact@v4
+        with:
+          name: selenium-reports
+          path: automation/reports
+
+      - name: Download Appium Reports
+        uses: actions/download-artifact@v4
+        with:
+          name: appium-reports
+          path: automation/reports
+
+      - name: Download Unit Reports
+        uses: actions/download-artifact@v4
+        with:
+          name: unit-reports
+          path: automation/reports
+
+      - name: Download Validation Reports
+        uses: actions/download-artifact@v4
+        with:
+          name: validation-reports
+          path: automation/reports
+
+      - name: Download Deployment Reports
+        uses: actions/download-artifact@v4
+        with:
+          name: deployment-reports
+          path: automation/reports
+
+      - name: Download Load Reports
+        uses: actions/download-artifact@v4
+        with:
+          name: load-reports
+          path: automation/reports
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install Python dependencies
+        run: pip install openpyxl
+
+      - name: Run Master Report Compiler
+        run: python automation/compile_report.py
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Build Web Application
+        run: |
+          cd web_frontend
+          npm ci
+          npm run build
+        env:
+          NODE_ENV: production
+
+      - name: Deploy to GitHub Pages Branch
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: web_frontend/dist
+          branch: gh-pages
+          token: ${{ secrets.GITHUB_TOKEN }}
+          clean: true
+
+      - name: Upload Consolidated E2E Excel Reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: Excel-Automation-Reports
+          path: Test Results/Excel/
+          retention-days: 30
+
+      - name: Upload HTML execution-reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: HTML-Dashboards
+          path: Test Results/HTML/
+          retention-days: 30
+
+      - name: Upload JSON and Summary Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: Execution-Summaries
+          path: |
+            Test Results/JSON/
+            Test Results/Summary/
+          retention-days: 30
+
+      - name: Publish Action Execution Summary Markdown
+        run: cat "Test Results/Summary/summary.md" >> $GITHUB_STEP_SUMMARY
