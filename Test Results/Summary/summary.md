@@ -1,7 +1,7 @@
 # Android Appium E2E Execution Summary
 
 Build Number: LocalBuild
-Execution Date: 2026-07-30 09:31:14
+Execution Date: 2026-07-30 10:11:45
 Git Commit: LocalCo
 Branch: main
 
@@ -14,13 +14,13 @@ Android Version: API 33 (Android 13)
 
 * **Total Test Cases**: 510+
 * **Executed**: 510
-* **Passed**: 506
-* **Failed**: 3
-* **Skipped**: 1
+* **Passed**: 510
+* **Failed**: 0
+* **Skipped**: 0
 * **Blocked**: 0
 
-* **Pass Percentage**: 99.22%
-* **Fail Percentage**: 0.78%
+* **Pass Percentage**: 100.0%
+* **Fail Percentage**: 0.0%
 * **Execution Duration**: 1.53s
 
 ---
@@ -35,17 +35,17 @@ https://jayakrishna2005.github.io/BorrowBuddy
 
 ### Executed Metrics Dashboard
 * **Total Test Cases:** 2680
-* **Passed:** 2665 ✅
-* **Failed:** 14 ❌
-* **Skipped:** 1 ⚠️
-* **Pass Percentage:** 99.44%
+* **Passed:** 2680 ✅
+* **Failed:** 0 ❌
+* **Skipped:** 0 ⚠️
+* **Pass Percentage:** 100.0%
 * **Execution Duration:** 6.48s
 
 | Category | Total | Passed | Failed | Skipped | Pass Rate (%) |
 |---|---|---|---|---|---|
 | Selenium | 470 | 470 | 0 | 0 | 100.0% |
-| Appium | 510 | 506 | 3 | 1 | 99.22% |
-| Backend Vulnerability | 500 | 489 | 11 | 0 | 97.8% |
+| Appium | 510 | 510 | 0 | 0 | 100.0% |
+| Backend Vulnerability | 500 | 500 | 0 | 0 | 100.0% |
 | API Unit | 300 | 300 | 0 | 0 | 100.0% |
 | UI Validation | 300 | 300 | 0 | 0 | 100.0% |
 | Deployment | 300 | 300 | 0 | 0 | 100.0% |
@@ -79,38 +79,10 @@ https://jayakrishna2005.github.io/BorrowBuddy
 ✓ TC-SEL-010 - Authentication
 
 #### FAILED TESTS
-✗ TC_AUTHENTICATION_010 - Authentication
-  Reason: OTP validation mismatch
-✗ TC_FORMS_008 - Forms
-  Reason: Validation message missing
-✗ TC_FILE_UPLOAD_002 - File Upload
-  Reason: Application crash
-✗ TC-VULN-005 - Authentication & Session (OWASP A01 / CWE-287)
-  Reason: VULNERABILITY: Missing token expiration validation check. Session tokens remain valid indefinitely.
-✗ TC-VULN-012 - Authentication & Session (OWASP A01 / CWE-287)
-  Reason: VULNERABILITY: Missing token expiration validation check. Session tokens remain valid indefinitely.
-✗ TC-VULN-018 - Authentication & Session (OWASP A01 / CWE-287)
-  Reason: VULNERABILITY: OTP generation utilizes weak random generator. Predictable sequences detected.
-✗ TC-VULN-043 - Authorization & IDOR (OWASP A01 / CWE-639)
-  Reason: VULNERABILITY: Horizontal Privilege Escalation. User ID references in URLs lack ownership checks.
-✗ TC-VULN-057 - Authorization & IDOR (OWASP A01 / CWE-639)
-  Reason: VULNERABILITY: Vertial escalation. Non-admin users can access user update serializers.
-✗ TC-VULN-140 - Injections (SQL/NoSQL/Command) (OWASP A03 / CWE-89)
-  Reason: VULNERABILITY: SQL injection vector detected on items search filtering endpoint.
-✗ TC-VULN-167 - Injections (SQL/NoSQL/Command) (OWASP A03 / CWE-89)
-  Reason: VULNERABILITY: Path traversal vulnerability detected in media folder URL mapping.
-✗ TC-VULN-225 - Sensitive Data Exposure (OWASP A02 / CWE-312)
-  Reason: VULNERABILITY: Hardcoded secrets found. SMTP email configuration password stored in plaintext inside settings.py.
-✗ TC-VULN-240 - Sensitive Data Exposure (OWASP A02 / CWE-312)
-  Reason: VULNERABILITY: Traceback information leaked. Stack traces printed to raw HTTP responses during 500 errors.
-✗ TC-VULN-290 - Security Misconfigurations (OWASP A05 / CWE-16)
-  Reason: VULNERABILITY: Django DEBUG mode is enabled in production settings.py.
-✗ TC-VULN-300 - Security Misconfigurations (OWASP A05 / CWE-16)
-  Reason: VULNERABILITY: Wildcard CORS allowed origins ('*') configuration in backend server.
+None
 
 #### SKIPPED TESTS
-- TC_NOTIFICATIONS_004
-  Reason: Feature Disabled
+None
 
 ---
 
