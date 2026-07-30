@@ -78,6 +78,7 @@ def run_tests():
         ("Forms", 50, "Medium"),
         ("CRUD Operations", 50, "High"),
         ("Input Validation", 40, "Medium"),
+        ("Error Handling", 20, "Medium"),
         ("Session Management", 20, "High"),
         ("File Upload", 20, "Medium"),
         ("Accessibility", 20, "Low"),

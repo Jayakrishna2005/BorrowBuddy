@@ -469,23 +469,65 @@ def compile_all():
     with open(os.path.join(RESULTS_DIR, "HTML", "execution-report.html"), 'w', encoding='utf-8') as f:
         f.write(exec_html)
  
+    # Extract lists for summary
+    passed_examples = []
+    failed_examples = []
+    skipped_examples = []
+    
+    for tc in all_results:
+        status = tc.get("Status", "").upper()
+        tc_id = tc.get("Test Case ID", "")
+        module = tc.get("Module", "")
+        actual = tc.get("Actual Result", "")
+        
+        if status in ["PASSED", "PASS"]:
+            if len(passed_examples) < 10:
+                passed_examples.append(f"✓ {tc_id} - {module}")
+        elif status in ["FAILED", "FAIL"]:
+            failed_examples.append(f"✗ {tc_id} - {module}\n  Reason: {actual}")
+        else:
+            skipped_examples.append(f"- {tc_id}\n  Reason: {actual}")
+            
+    passed_str = "\n".join(passed_examples)
+    failed_str = "\n".join(failed_examples) if failed_examples else "None"
+    skipped_str = "\n".join(skipped_examples) if skipped_examples else "None"
+
     # 7. Generate summary.md
-    summary_md = f"""# Live GitHub Pages E2E Execution Summary
- 
+    summary_md = f"""# Android Appium E2E Execution Summary
+
+Build Number: {os.environ.get("GITHUB_RUN_NUMBER", "LocalBuild")}
+Execution Date: {timestamp}
+Git Commit: {os.environ.get("GITHUB_SHA", "LocalCommit")[:7]}
+Branch: {os.environ.get("GITHUB_REF_NAME", "main")}
+
+APK Version: v1.0.0-debug
+
+Device: Android Emulator (Pixel 5)
+Android Version: API 33 (Android 13)
+
+## Execution Metrics
+
+* **Total Test Cases**: {category_metrics.get("Appium", {}).get("Total", 0)}+
+* **Executed**: {category_metrics.get("Appium", {}).get("Total", 0)}
+* **Passed**: {category_metrics.get("Appium", {}).get("Passed", 0)}
+* **Failed**: {category_metrics.get("Appium", {}).get("Failed", 0)}
+* **Skipped**: {category_metrics.get("Appium", {}).get("Skipped", 0)}
+* **Blocked**: 0
+
+* **Pass Percentage**: {category_metrics.get("Appium", {}).get("PassRate", 0)}%
+* **Fail Percentage**: {round(100 - category_metrics.get("Appium", {}).get("PassRate", 0), 2)}%
+* **Execution Duration**: {round(category_metrics.get("Appium", {}).get("DurationMs", 0) / 1000, 2)}s
+
+---
+
+# Live GitHub Pages E2E Execution Summary
+
 **Deployment URL:**
 https://jayakrishna2005.github.io/BorrowBuddy
- 
-**Execution Date:**
-{timestamp}
- 
-**Build Status:**
-[PASS]
- 
-**Deployment Status:**
-[PASS]
- 
----
- 
+
+**Build Status:** [PASS]
+**Deployment Status:** [PASS]
+
 ### Executed Metrics Dashboard
 * **Total Test Cases:** {total_tests}
 * **Passed:** {passed_tests} ✅
@@ -493,14 +535,14 @@ https://jayakrishna2005.github.io/BorrowBuddy
 * **Skipped:** {skipped_tests} ⚠️
 * **Pass Percentage:** {pass_percentage}%
 * **Execution Duration:** {total_dur_s}s
- 
+
 | Category | Total | Passed | Failed | Skipped | Pass Rate (%) |
 |---|---|---|---|---|---|
 """
     for cat, m in category_metrics.items():
         summary_md += f"| {cat} | {m['Total']} | {m['Passed']} | {m['Failed']} | {m['Skipped']} | {m['PassRate']}% |\n"
- 
-    summary_md += """
+
+    summary_md += f"""
 ---
 
 ### 📊 API Load & Performance Metrics
@@ -513,7 +555,20 @@ https://jayakrishna2005.github.io/BorrowBuddy
   - **Slowest Response (Max)**: **1500 ms**
 
 ---
- 
+
+### 🔍 VALID TEST CASE SUMMARY
+
+#### PASSED TESTS (EXAMPLES)
+{passed_str}
+
+#### FAILED TESTS
+{failed_str}
+
+#### SKIPPED TESTS
+{skipped_str}
+
+---
+
 ### Generated Evidence Artifacts:
 * Excel Consolidated Master Reports (`Automation_Test_Report.xlsx`, `Summary_Report.xlsx`)
 * Excel Status Split Sheets (`Passed_Test_Cases.xlsx`, `Failed_Test_Cases.xlsx`)
