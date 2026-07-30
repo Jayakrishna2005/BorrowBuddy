@@ -1,0 +1,51 @@
+name: security-review.yml
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  security-events: write
+
+jobs:
+  security-scan:
+    name: Backend Security Review & Auditing
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Detect Backend Technology Stack
+        run: |
+          echo "=== Backend Autodetect ==="
+          if [ -f "django_backend/manage.py" ]; then
+            echo "Detected Django Backend Project"
+          fi
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install openpyxl requests
+
+      - name: Run Backend Vulnerability Scans
+        run: python automation/tests/run_vulnerability.py
+        env:
+          API_URL: http://localhost:8000/api/v1
+
+      - name: Upload Security Vulnerability Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: vulnerability-reports
+          path: |
+            automation/reports/Vulnerability_Test_Report.xlsx
+            automation/reports/vulnerability-results.json
+          retention-days: 5

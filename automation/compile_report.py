@@ -36,6 +36,7 @@ def compile_all():
     test_files = {
         "Selenium": "selenium-results.json",
         "Appium": "appium-results.json",
+        "Backend Vulnerability": "vulnerability-results.json",
         "API Unit": "unit-results.json",
         "UI Validation": "validation-results.json",
         "Deployment": "deployment-results.json",
