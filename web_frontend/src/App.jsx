@@ -39,7 +39,7 @@ function App() {
           
           setTotalUnread(prev => {
             if (prev !== null && unread > prev) {
-              if (!window.location.pathname.startsWith('/chat/')) {
+              if (!location.pathname.startsWith('/chat/')) {
                  setGlobalToast('New message received! Click to view.');
                  try {
                    const audio = new Audio('https://www.soundjay.com/buttons/sounds/button-09.mp3');
