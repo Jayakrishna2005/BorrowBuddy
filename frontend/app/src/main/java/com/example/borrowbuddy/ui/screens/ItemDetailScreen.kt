@@ -203,7 +203,7 @@ fun ItemDetailScreen(navController: NavController, itemId: String?) {
                     // Reviews Section
                     if (!item?.reviews.isNullOrEmpty()) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text("User Reviews", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                            Text("User Reviews", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1A1A1A))
                             if (item?.reviewsCount ?: 0 > 0) {
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Surface(color = Color(0xFFE8F5E9), shape = RoundedCornerShape(8.dp)) {
