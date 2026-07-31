@@ -102,13 +102,13 @@ function App() {
       )}
       {user && (
         <nav className="navbar">
-          <Link to="/" className="nav-brand" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
+          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
             <img src="/logo.png" alt="BorrowBuddy Logo" style={{ width: '38px', height: '38px', objectFit: 'contain', borderRadius: '8px' }} />
-            <span style={{ 
+            <span className="nav-brand" style={{ 
               fontWeight: '900', 
               fontSize: '1.4rem',
-              color: 'var(--primary)',
-              letterSpacing: '-1px'
+              letterSpacing: '-1px',
+              whiteSpace: 'nowrap'
             }}>BorrowBuddy</span>
           </Link>
           <div className="nav-links">

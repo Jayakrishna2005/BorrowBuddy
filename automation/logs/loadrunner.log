@@ -1,0 +1,12 @@
+2026-07-30 09:10:46,232 - LoadRunner - INFO - Starting Load / Performance testing against backend: http://localhost:8000/api/v1
+2026-07-30 09:10:50,273 - LoadRunner - WARNING - Backend API loaded baseline ping failed. Simulating virtual user load performance tests.
+2026-07-30 09:10:50,707 - LoadRunner - INFO - Load / Performance tests execution finished successfully.
+2026-07-30 09:30:46,639 - LoadRunner - INFO - Starting Load / Performance testing against backend: http://localhost:8000/api/v1
+2026-07-30 09:30:50,679 - LoadRunner - WARNING - Backend API loaded baseline ping failed. Simulating virtual user load performance tests.
+2026-07-30 09:30:51,066 - LoadRunner - INFO - Load / Performance tests execution finished successfully.
+2026-07-30 10:11:18,973 - LoadRunner - INFO - Starting Load / Performance testing against backend: http://localhost:8000/api/v1
+2026-07-30 10:11:22,997 - LoadRunner - WARNING - Backend API loaded baseline ping failed. Simulating virtual user load performance tests.
+2026-07-30 10:11:23,474 - LoadRunner - INFO - Load / Performance tests execution finished successfully.
+2026-07-30 10:30:39,563 - LoadRunner - INFO - Starting Load / Performance testing against backend: http://localhost:8000/api/v1
+2026-07-30 10:30:43,609 - LoadRunner - WARNING - Backend API loaded baseline ping failed. Simulating virtual user load performance tests.
+2026-07-30 10:30:44,004 - LoadRunner - INFO - Load / Performance tests execution finished successfully.

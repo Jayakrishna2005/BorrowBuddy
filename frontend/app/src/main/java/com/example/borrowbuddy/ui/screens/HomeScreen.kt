@@ -707,16 +707,12 @@ fun ItemCardUI(navController: NavController, item: Item, currentUserId: String? 
                 
                 Spacer(modifier = Modifier.height(2.dp))
                 
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.LocationOn, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(10.dp))
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = item.description.take(20) + "...",
-                        fontSize = 10.sp,
-                        color = Color.Gray,
-                        maxLines = 1
-                    )
-                }
+                Text(
+                    text = item.description.take(20) + "...",
+                    fontSize = 10.sp,
+                    color = Color.Gray,
+                    maxLines = 1
+                )
 
                 Spacer(modifier = Modifier.height(6.dp))
 

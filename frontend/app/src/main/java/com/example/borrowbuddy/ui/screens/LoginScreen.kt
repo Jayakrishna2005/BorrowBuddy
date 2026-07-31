@@ -12,6 +12,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -34,6 +36,8 @@ import com.example.borow_buddy_frontend.R
 @Composable
 fun LoginScreen(navController: NavController, viewModel: AuthViewModel = viewModel()) {
     val context = LocalContext.current
+    val session = remember { SessionManager(context) }
+    var showSettingsDialog by remember { mutableStateOf(false) }
     
     var mode by remember { mutableStateOf("login") } // login, register, verify-otp, forgot-pwd, reset-pwd
     
@@ -59,7 +63,6 @@ fun LoginScreen(navController: NavController, viewModel: AuthViewModel = viewMod
     LaunchedEffect(authState) {
         when (authState) {
             is AuthState.Success -> {
-                val session = SessionManager(context)
                 session.saveUser((authState as AuthState.Success).user)
                 Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
                 navController.navigate("home") {
@@ -90,16 +93,20 @@ fun LoginScreen(navController: NavController, viewModel: AuthViewModel = viewMod
         }
     }
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
-            .padding(24.dp)
-            .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
     ) {
-        // Illustration
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(24.dp)
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            // Illustration
         Image(
             painter = painterResource(id = R.drawable.login_illustration),
             contentDescription = "Students swapping items",
@@ -327,6 +334,80 @@ fun LoginScreen(navController: NavController, viewModel: AuthViewModel = viewMod
                 Text("Back to ", color = Color.Gray, fontSize = 14.sp)
                 Text("Login", color = Color(0xFF6C5CE7), fontWeight = FontWeight.Bold, fontSize = 14.sp, modifier = Modifier.clickable { mode = "login" })
             }
+        }
+    }
+        
+    IconButton(
+            onClick = { showSettingsDialog = true },
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(top = 16.dp, end = 16.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Settings,
+                contentDescription = "Server Settings",
+                tint = Color.Gray
+            )
+        }
+
+        if (showSettingsDialog) {
+            var tempUrl by remember { mutableStateOf(session.getBaseUrl()) }
+            AlertDialog(
+                onDismissRequest = { showSettingsDialog = false },
+                title = { Text("Server Settings", color = Color.Black) },
+                text = {
+                    Column {
+                        OutlinedTextField(
+                            value = tempUrl,
+                            onValueChange = { tempUrl = it },
+                            label = { Text("API Base URL") },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = textFieldColors,
+                            singleLine = true
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Text("Quick Connect:", fontWeight = FontWeight.Bold, fontSize = 12.sp, color = Color.Gray)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Button(
+                                onClick = { tempUrl = "http://10.0.2.2:8000/" },
+                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6C5CE7))
+                            ) {
+                                Text("Emulator", color = Color.White)
+                            }
+                            Button(
+                                onClick = { tempUrl = "http://172.20.232.45:8000/" },
+                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6C5CE7))
+                            ) {
+                                Text("Host PC", color = Color.White)
+                            }
+                        }
+                    }
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            if (tempUrl.isNotBlank()) {
+                                val formattedUrl = if (!tempUrl.endsWith("/")) "$tempUrl/" else tempUrl
+                                session.saveBaseUrl(formattedUrl)
+                                Toast.makeText(context, "Base URL updated to: $formattedUrl", Toast.LENGTH_SHORT).show()
+                                showSettingsDialog = false
+                            }
+                        }
+                    ) {
+                        Text("Save", color = Color(0xFF6C5CE7))
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showSettingsDialog = false }) {
+                        Text("Cancel", color = Color.Gray)
+                    }
+                },
+                containerColor = Color.White
+            )
         }
     }
 }

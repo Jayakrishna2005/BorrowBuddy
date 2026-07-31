@@ -10,6 +10,8 @@ function Home({ user }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [profileData, setProfileData] = useState(user);
+  const [quantityModalItem, setQuantityModalItem] = useState(null);
+  const [requestedQuantity, setRequestedQuantity] = useState(1);
 
   useEffect(() => {
     fetchData();
@@ -48,16 +50,16 @@ function Home({ user }) {
     }
   };
 
-  const handleRequest = async (item) => {
+  const handleRequest = async (item, forceQty = null) => {
     let requestQty = 1;
-    if (item.quantity > 1) {
-      const qtyInput = window.prompt(`How many would you like to borrow? (1 to ${item.quantity})`, "1");
-      if (qtyInput === null) return; // User cancelled
-      requestQty = parseInt(qtyInput, 10);
-      if (isNaN(requestQty) || requestQty < 1 || requestQty > item.quantity) {
-        alert(`Invalid quantity. Please enter a number between 1 and ${item.quantity}.`);
-        return;
-      }
+    if (item.quantity > 1 && forceQty === null) {
+      setRequestedQuantity(1);
+      setQuantityModalItem(item);
+      return;
+    }
+    
+    if (forceQty !== null) {
+      requestQty = forceQty;
     }
 
     try {
@@ -232,6 +234,83 @@ function Home({ user }) {
               No items available matching your search.
             </div>
           )}
+        </div>
+      )}
+
+      {quantityModalItem && (
+        <div className="fade-in" style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.8)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }} onClick={() => setQuantityModalItem(null)}>
+          <div style={{ background: 'var(--glass-bg)', backdropFilter: 'blur(16px)', padding: '2rem', borderRadius: '24px', width: '100%', maxWidth: '400px', border: '1px solid var(--glass-border)', textAlign: 'center' }} onClick={e => e.stopPropagation()}>
+            <h3 style={{ marginBottom: '0.5rem', color: 'var(--text-main)' }}>Select Quantity</h3>
+            <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>How many of <strong style={{ color: 'var(--text-main)' }}>{quantityModalItem.title}</strong> do you need?</p>
+            
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1.5rem', marginBottom: '2rem' }}>
+              <button 
+                onClick={() => setRequestedQuantity(q => Math.max(1, q - 1))}
+                className="btn"
+                style={{ 
+                  width: '40px', 
+                  height: '40px', 
+                  padding: 0, 
+                  borderRadius: '50%', 
+                  fontSize: '1.5rem', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center', 
+                  background: requestedQuantity <= 1 ? 'rgba(0,0,0,0.03)' : 'rgba(108, 92, 231, 0.1)', 
+                  color: requestedQuantity <= 1 ? 'var(--text-muted)' : 'var(--primary)',
+                  cursor: requestedQuantity <= 1 ? 'not-allowed' : 'pointer'
+                }}
+                disabled={requestedQuantity <= 1}
+              >
+                -
+              </button>
+              <span style={{ fontSize: '2rem', fontWeight: 'bold', minWidth: '60px', color: 'var(--text-main)' }}>{requestedQuantity}</span>
+              <button 
+                onClick={() => setRequestedQuantity(q => Math.min(quantityModalItem.quantity, q + 1))}
+                className="btn"
+                style={{ 
+                  width: '40px', 
+                  height: '40px', 
+                  padding: 0, 
+                  borderRadius: '50%', 
+                  fontSize: '1.5rem', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center', 
+                  background: requestedQuantity >= quantityModalItem.quantity ? 'rgba(0,0,0,0.03)' : 'rgba(108, 92, 231, 0.1)', 
+                  color: requestedQuantity >= quantityModalItem.quantity ? 'var(--text-muted)' : 'var(--primary)',
+                  cursor: requestedQuantity >= quantityModalItem.quantity ? 'not-allowed' : 'pointer'
+                }}
+                disabled={requestedQuantity >= quantityModalItem.quantity}
+              >
+                +
+              </button>
+            </div>
+            
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>Available: {quantityModalItem.quantity}</p>
+
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <button 
+                onClick={() => setQuantityModalItem(null)} 
+                className="btn" 
+                style={{ flex: 1, background: 'rgba(0,0,0,0.05)', color: 'var(--text-main)', border: '1px solid rgba(0,0,0,0.1)' }}
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={() => {
+                  const itemToRequest = quantityModalItem;
+                  const qty = requestedQuantity;
+                  setQuantityModalItem(null);
+                  handleRequest(itemToRequest, qty);
+                }} 
+                className="btn btn-primary" 
+                style={{ flex: 1 }}
+              >
+                Confirm Request
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

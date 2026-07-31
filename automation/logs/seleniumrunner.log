@@ -1,0 +1,12 @@
+2026-07-30 09:07:51,282 - SeleniumRunner - INFO - Starting Selenium tests against live deployment: https://jayakrishna2005.github.io/BorrowBuddy
+2026-07-30 09:08:55,526 - SeleniumRunner - INFO - Successfully connected to live web deployment.
+2026-07-30 09:08:58,251 - SeleniumRunner - INFO - Selenium E2E tests execution finished successfully.
+2026-07-30 09:30:29,300 - SeleniumRunner - INFO - Starting Selenium tests against live deployment: https://jayakrishna2005.github.io/BorrowBuddy
+2026-07-30 09:30:37,145 - SeleniumRunner - INFO - Successfully connected to live web deployment.
+2026-07-30 09:30:39,862 - SeleniumRunner - INFO - Selenium E2E tests execution finished successfully.
+2026-07-30 10:10:47,624 - SeleniumRunner - INFO - Starting Selenium tests against live deployment: https://jayakrishna2005.github.io/BorrowBuddy
+2026-07-30 10:11:06,115 - SeleniumRunner - INFO - Successfully connected to live web deployment.
+2026-07-30 10:11:10,963 - SeleniumRunner - INFO - Selenium E2E tests execution finished successfully.
+2026-07-30 10:30:23,751 - SeleniumRunner - INFO - Starting Selenium tests against live deployment: https://jayakrishna2005.github.io/BorrowBuddy
+2026-07-30 10:30:29,552 - SeleniumRunner - INFO - Successfully connected to live web deployment.
+2026-07-30 10:30:30,123 - SeleniumRunner - INFO - Selenium E2E tests execution finished successfully.
