@@ -130,7 +130,7 @@ function Home({ user }) {
             <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--success)' }}>
               {profileData?.sellerSentiment !== undefined ? `${profileData.sellerSentiment}%` : '100%'}
             </div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Seller Sentiment</div>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Sentiment Score</div>
           </div>
         </div>
       </div>
