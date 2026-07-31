@@ -355,33 +355,75 @@ fun ItemDetailScreen(navController: NavController, itemId: String?) {
 @Composable
 fun ReviewItem(review: com.example.borrowbuddy.model.Review) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFEEEEF5))
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFE2E8F0))
     ) {
-        Column(modifier = Modifier.padding(12.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                repeat(5) { index ->
-                    Icon(
-                        imageVector = if (index < review.rating) Icons.Default.Star else Icons.Default.StarBorder,
-                        contentDescription = null,
-                        tint = if (index < review.rating) Color(0xFFFF9800) else Color.Gray,
-                        modifier = Modifier.size(16.dp)
-                    )
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                // Reviewer Name & Profile Icon
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        modifier = Modifier
+                            .size(32.dp)
+                            .clip(CircleShape)
+                            .background(Color(0xFF6C5CE7).copy(alpha = 0.1f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Person,
+                            contentDescription = null,
+                            tint = Color(0xFF6C5CE7),
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Column {
+                        Text(
+                            text = review.reviewerName ?: "Anonymous",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp,
+                            color = Color.Black
+                        )
+                        Text(
+                            text = review.createdAt?.split("T")?.get(0) ?: "",
+                            fontSize = 11.sp,
+                            color = Color.Gray
+                        )
+                    }
                 }
-                Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = review.createdAt?.split("T")?.get(0) ?: "",
-                    fontSize = 11.sp,
-                    color = Color.Gray
-                )
+                
+                // Rating Badges
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    repeat(5) { index ->
+                        Icon(
+                            imageVector = Icons.Default.Star,
+                            contentDescription = null,
+                            tint = if (index < review.rating) Color(0xFFFFB400) else Color.LightGray.copy(alpha = 0.5f),
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                }
             }
-            Spacer(modifier = Modifier.height(8.dp))
+            
+            Spacer(modifier = Modifier.height(12.dp))
+            
+            // Comment Text
             Text(
-                text = review.comment,
+                text = "\"${review.comment}\"",
                 fontSize = 14.sp,
-                color = Color.DarkGray
+                color = Color(0xFF2D3748),
+                lineHeight = 20.sp,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier.padding(start = 4.dp)
             )
         }
     }

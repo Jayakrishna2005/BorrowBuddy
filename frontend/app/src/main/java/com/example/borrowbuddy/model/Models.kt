@@ -46,6 +46,8 @@ data class Review(
     val id: Int? = null,
     val rating: Int,
     val comment: String,
+    @SerializedName("reviewer_name")
+    val reviewerName: String? = null,
     @SerializedName("created_at")
     val createdAt: String? = null
 )
