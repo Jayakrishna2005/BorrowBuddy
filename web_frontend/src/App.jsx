@@ -103,7 +103,7 @@ function App() {
       {user && (
         <nav className="navbar">
           <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
-            <img src="/logo.png" alt="BorrowBuddy Logo" style={{ width: '38px', height: '38px', objectFit: 'contain', borderRadius: '8px' }} />
+            <img src={`${import.meta.env.BASE_URL}logo.png`} alt="BorrowBuddy Logo" style={{ width: '38px', height: '38px', objectFit: 'contain', borderRadius: '8px' }} />
             <span className="nav-brand" style={{ 
               fontWeight: '900', 
               fontSize: '1.4rem',

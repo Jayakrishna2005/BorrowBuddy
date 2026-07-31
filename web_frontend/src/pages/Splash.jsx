@@ -44,7 +44,7 @@ function Splash({ onFinish }) {
         transition: 'all 1.5s cubic-bezier(0.25, 1, 0.5, 1)'
       }}>
         <img 
-          src="/logo.png" 
+          src={`${import.meta.env.BASE_URL}logo.png`} 
           alt="BorrowBuddy Logo" 
           style={{ 
             width: '320px', 

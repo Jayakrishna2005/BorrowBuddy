@@ -113,7 +113,7 @@ function Login({ setUser }) {
       <div style={{ width: '100%', maxWidth: '400px' }}>
         
         <img 
-          src="/login_illustration.png" 
+          src={`${import.meta.env.BASE_URL}login_illustration.png`} 
           alt="Students swapping items" 
           style={{ width: '100%', height: '240px', objectFit: 'contain', marginBottom: '2rem' }} 
         />
