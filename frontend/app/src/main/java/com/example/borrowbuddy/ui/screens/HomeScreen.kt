@@ -727,7 +727,7 @@ fun ItemCardUI(navController: NavController, item: Item, currentUserId: String? 
                     ) {
                         Icon(Icons.Default.Star, contentDescription = null, tint = Color(0xFFFFB400), modifier = Modifier.size(14.dp))
                         Spacer(modifier = Modifier.width(2.dp))
-                        Text(text = item.averageRating.toString(), fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        Text(text = "${item.averageRating} (${item.reviewsCount})", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color.Black)
                     }
                 }
             }

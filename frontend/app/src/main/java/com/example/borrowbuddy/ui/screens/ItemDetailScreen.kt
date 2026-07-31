@@ -208,7 +208,7 @@ fun ItemDetailScreen(navController: NavController, itemId: String?) {
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Surface(color = Color(0xFFE8F5E9), shape = RoundedCornerShape(8.dp)) {
                                     Text(
-                                        " ${item?.averageRating} ★",
+                                        text = " ${item?.averageRating} ★ (${item?.reviewsCount ?: 0} ${if ((item?.reviewsCount ?: 0) == 1) "review" else "reviews"})",
                                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
                                         color = Color(0xFF2E7D32),
                                         fontWeight = FontWeight.Bold,
