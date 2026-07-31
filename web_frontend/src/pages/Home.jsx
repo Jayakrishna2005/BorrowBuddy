@@ -12,6 +12,7 @@ function Home({ user }) {
   const [profileData, setProfileData] = useState(user);
   const [quantityModalItem, setQuantityModalItem] = useState(null);
   const [requestedQuantity, setRequestedQuantity] = useState(1);
+  const [selectedDetailItem, setSelectedDetailItem] = useState(null);
 
   useEffect(() => {
     fetchData();
@@ -163,7 +164,20 @@ function Home({ user }) {
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem' }}>
           {filteredItems.map(item => (
-            <div key={item.id} className="glass-card" style={{ display: 'flex', flexDirection: 'column' }}>
+            <div 
+              key={item.id} 
+              className="glass-card" 
+              style={{ display: 'flex', flexDirection: 'column', cursor: 'pointer', transition: 'transform 0.2s ease, box-shadow 0.2s ease' }}
+              onClick={() => setSelectedDetailItem(item)}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 12px 24px rgba(0, 0, 0, 0.2)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
               <div style={{ height: '200px', backgroundColor: 'rgba(0,0,0,0.2)', position: 'relative' }}>
                 {item.image ? (
                   <img src={item.image.startsWith('http') ? item.image : `http://localhost:8000${item.image}`} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -188,7 +202,7 @@ function Home({ user }) {
                 </div>
                 
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }} onClick={(e) => e.stopPropagation()}>
                     <div style={{ width: '30px', height: '30px', borderRadius: '50%', background: 'linear-gradient(135deg, var(--secondary), var(--primary))' }}></div>
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                       <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>By: {item.owner_name || 'Anonymous'}</span>
@@ -202,7 +216,7 @@ function Home({ user }) {
                   </div>
                   {user?.id === item.owner_id ? (
                     <button 
-                      onClick={() => handleDelete(item.id)}
+                      onClick={(e) => { e.stopPropagation(); handleDelete(item.id); }}
                       className="btn" 
                       style={{ padding: '0.5rem 1rem', fontSize: '0.9rem', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', border: '1px solid var(--danger)' }}
                     >
@@ -210,7 +224,7 @@ function Home({ user }) {
                     </button>
                   ) : item.is_available ? (
                     <button 
-                      onClick={() => handleRequest(item)}
+                      onClick={(e) => { e.stopPropagation(); handleRequest(item); }}
                       className="btn btn-primary" 
                       style={{ padding: '0.5rem 1rem', fontSize: '0.9rem' }}
                     >
@@ -218,7 +232,7 @@ function Home({ user }) {
                     </button>
                   ) : (
                     <button 
-                      onClick={() => setSimilarModalItem(item)}
+                      onClick={(e) => { e.stopPropagation(); setSimilarModalItem(item); }}
                       className="btn" 
                       style={{ padding: '0.5rem 1rem', fontSize: '0.9rem', background: 'rgba(0, 209, 178, 0.1)', color: '#00D1B2', border: '1px solid #00D1B2' }}
                     >
@@ -335,6 +349,133 @@ function Home({ user }) {
               )}
             </div>
             <button onClick={() => setSimilarModalItem(null)} className="btn" style={{ marginTop: '1.5rem', width: '100%', background: 'rgba(255,255,255,0.1)' }}>Close</button>
+          </div>
+        </div>
+      )}
+
+      {selectedDetailItem && (
+        <div className="fade-in" style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.8)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }} onClick={() => setSelectedDetailItem(null)}>
+          <div style={{ background: 'var(--glass-bg)', backdropFilter: 'blur(16px)', padding: '2.5rem', borderRadius: '24px', width: '100%', maxWidth: '650px', border: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', gap: '1.5rem', maxHeight: '90vh', overflowY: 'auto' }} onClick={e => e.stopPropagation()}>
+            
+            {/* Header / Title */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div>
+                <h2 style={{ fontSize: '1.8rem', color: 'var(--text-main)', marginBottom: '0.25rem' }}>{selectedDetailItem.title}</h2>
+                <span style={{ background: 'var(--primary)', color: 'white', padding: '4px 12px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 'bold' }}>
+                  {selectedDetailItem.category_name}
+                </span>
+              </div>
+              <button 
+                onClick={() => setSelectedDetailItem(null)} 
+                style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '1.5rem', cursor: 'pointer', padding: 0 }}
+              >
+                &times;
+              </button>
+            </div>
+
+            {/* Image */}
+            <div style={{ height: '250px', borderRadius: '16px', overflow: 'hidden', position: 'relative' }}>
+              {selectedDetailItem.image ? (
+                <img src={selectedDetailItem.image.startsWith('http') ? selectedDetailItem.image : `http://localhost:8000${selectedDetailItem.image}`} alt={selectedDetailItem.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.05)', color: 'var(--text-muted)' }}>No Image Available</div>
+              )}
+            </div>
+
+            {/* Details Grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
+              <div>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Owner</span>
+                <p style={{ margin: 0, fontWeight: 'bold', color: 'var(--text-main)' }}>{selectedDetailItem.owner_name}</p>
+              </div>
+              <div>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Status</span>
+                <p style={{ margin: 0, fontWeight: 'bold', color: selectedDetailItem.is_available ? 'var(--success)' : 'var(--danger)' }}>
+                  {selectedDetailItem.is_available ? 'Available' : 'Already Borrowed'}
+                </p>
+              </div>
+              <div>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Available Quantity</span>
+                <p style={{ margin: 0, fontWeight: 'bold', color: 'var(--text-main)' }}>{selectedDetailItem.quantity}</p>
+              </div>
+              <div>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Max Borrow Days</span>
+                <p style={{ margin: 0, fontWeight: 'bold', color: 'var(--text-main)' }}>{selectedDetailItem.max_borrow_days || 7} days</p>
+              </div>
+            </div>
+
+            {/* Description */}
+            {selectedDetailItem.description && (
+              <div>
+                <h4 style={{ fontSize: '1rem', color: 'var(--text-main)', marginBottom: '0.5rem' }}>Description</h4>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', margin: 0, lineHeight: '1.5' }}>{selectedDetailItem.description}</p>
+              </div>
+            )}
+
+            {/* Reviews Section */}
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.5rem' }}>
+                <h4 style={{ fontSize: '1.1rem', color: 'var(--text-main)', margin: 0 }}>User Reviews</h4>
+                {selectedDetailItem.reviews_count > 0 && (
+                  <span style={{ background: 'rgba(0, 200, 83, 0.1)', color: '#00C853', padding: '2px 8px', borderRadius: '12px', fontSize: '0.8rem', fontWeight: 'bold' }}>
+                    {selectedDetailItem.average_rating} ★ ({selectedDetailItem.reviews_count} {selectedDetailItem.reviews_count === 1 ? 'review' : 'reviews'})
+                  </span>
+                )}
+              </div>
+
+              {selectedDetailItem.reviews && selectedDetailItem.reviews.length > 0 ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxHeight: '200px', overflowY: 'auto', paddingRight: '0.5rem' }}>
+                  {selectedDetailItem.reviews.map(review => (
+                    <div key={review.id} style={{ background: 'rgba(255,255,255,0.03)', padding: '1rem', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem', color: 'white', fontWeight: 'bold' }}>
+                            {review.reviewer_name?.charAt(0).toUpperCase() || 'A'}
+                          </div>
+                          <span style={{ fontSize: '0.9rem', fontWeight: 'bold', color: 'var(--text-main)' }}>{review.reviewer_name || 'Anonymous'}</span>
+                        </div>
+                        <div style={{ display: 'flex', gap: '0.1rem', color: '#FFB400', fontSize: '0.8rem' }}>
+                          {Array.from({ length: 5 }).map((_, i) => (
+                            <span key={i} style={{ color: i < review.rating ? '#FFB400' : 'rgba(255,255,255,0.1)' }}>★</span>
+                          ))}
+                        </div>
+                      </div>
+                      <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-muted)', fontStyle: 'italic' }}>"{review.comment}"</p>
+                      <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.3)', display: 'block', marginTop: '0.5rem', textAlign: 'right' }}>
+                        {review.created_at?.split('T')[0]}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', fontStyle: 'italic', margin: 0 }}>No reviews yet for this item.</p>
+              )}
+            </div>
+
+            {/* Actions */}
+            <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+              <button 
+                onClick={() => setSelectedDetailItem(null)} 
+                className="btn" 
+                style={{ flex: 1, background: 'rgba(255,255,255,0.1)', color: 'var(--text-main)' }}
+              >
+                Close
+              </button>
+              {user?.id !== selectedDetailItem.owner_id && selectedDetailItem.is_available && (
+                <button 
+                  onClick={() => {
+                    const itemToReq = selectedDetailItem;
+                    setSelectedDetailItem(null);
+                    handleRequest(itemToReq);
+                  }} 
+                  className="btn btn-primary" 
+                  style={{ flex: 1 }}
+                >
+                  Request to Borrow
+                </button>
+              )}
+            </div>
+
           </div>
         </div>
       )}
