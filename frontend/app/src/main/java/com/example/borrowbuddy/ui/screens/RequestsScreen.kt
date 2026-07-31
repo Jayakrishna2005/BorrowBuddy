@@ -1,5 +1,6 @@
 package com.example.borrowbuddy.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -47,8 +48,8 @@ fun RequestsScreen(navController: NavController) {
     var receivedRequests by remember { mutableStateOf<List<BookingDTO>>(emptyList()) }
     var sentRequests by remember { mutableStateOf<List<BookingDTO>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
-
     var isRefreshing by remember { mutableStateOf(false) }
+    var showReviewDialogBooking by remember { mutableStateOf<BookingDTO?>(null) }
 
     fun refreshData() {
         if (user == null) {
@@ -193,6 +194,7 @@ fun RequestsScreen(navController: NavController) {
                                     navController.navigate("chat/$id")
                                 }
                             },
+                            onReviewClick = { showReviewDialogBooking = booking },
                             api = api,
                             user = user
                         )
@@ -206,6 +208,106 @@ fun RequestsScreen(navController: NavController) {
                 contentColor = MaterialTheme.colorScheme.primary
             )
         }
+    }
+
+    if (showReviewDialogBooking != null) {
+        val booking = showReviewDialogBooking!!
+        var rating by remember { mutableStateOf(5) }
+        var comment by remember { mutableStateOf("") }
+        var isSubmitting by remember { mutableStateOf(false) }
+        
+        AlertDialog(
+            onDismissRequest = { if (!isSubmitting) showReviewDialogBooking = null },
+            title = { Text("Review Item", color = Color.Black, fontWeight = FontWeight.Bold) },
+            text = {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        text = "How was your experience borrowing ${booking.itemName}?",
+                        color = Color.DarkGray,
+                        fontSize = 14.sp
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    // Star Rating selector
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        for (star in 1..5) {
+                            IconButton(onClick = { rating = star }) {
+                                Icon(
+                                    imageVector = Icons.Default.Star,
+                                    contentDescription = "$star stars",
+                                    tint = if (star <= rating) Color(0xFFFFB400) else Color.LightGray.copy(alpha = 0.5f),
+                                    modifier = Modifier.size(36.dp)
+                                )
+                            }
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    OutlinedTextField(
+                        value = comment,
+                        onValueChange = { comment = it },
+                        placeholder = { Text("Write a comment about the item or owner...") },
+                        modifier = Modifier.fillMaxWidth().height(100.dp),
+                        maxLines = 4,
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        if (comment.isBlank()) {
+                            Toast.makeText(context, "Please write a comment", Toast.LENGTH_SHORT).show()
+                            return@Button
+                        }
+                        isSubmitting = true
+                        coroutineScope.launch {
+                            try {
+                                val reviewRequest = com.example.borrowbuddy.network.ReviewRequest(
+                                    item = booking.item ?: "",
+                                    reviewer = user?.id?.toString() ?: "",
+                                    rating = rating,
+                                    comment = comment.trim(),
+                                    booking = booking.id ?: ""
+                                )
+                                api.createReview(reviewRequest)
+                                Toast.makeText(context, "Review submitted successfully!", Toast.LENGTH_SHORT).show()
+                                showReviewDialogBooking = null
+                                refreshData()
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                                Toast.makeText(context, "Failed to submit review: ${e.message}", Toast.LENGTH_SHORT).show()
+                            } finally {
+                                isSubmitting = false
+                            }
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6C5CE7)),
+                    shape = RoundedCornerShape(8.dp),
+                    enabled = !isSubmitting
+                ) {
+                    if (isSubmitting) {
+                        CircularProgressIndicator(color = Color.White, modifier = Modifier.size(16.dp))
+                    } else {
+                        Text("Confirm Request")
+                    }
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showReviewDialogBooking = null },
+                    enabled = !isSubmitting
+                ) {
+                    Text("Cancel", color = Color.Gray)
+                }
+            },
+            containerColor = Color.White,
+            shape = RoundedCornerShape(20.dp)
+        )
     }
 }
 }
@@ -340,6 +442,7 @@ fun SentRequestCard(
     booking: BookingDTO, 
     baseUrl: String,
     onChat: () -> Unit, 
+    onReviewClick: () -> Unit,
     api: BorrowBuddyApi,
     user: com.example.borrowbuddy.model.User?
 ) {
@@ -449,6 +552,26 @@ fun SentRequestCard(
                     Icon(Icons.Default.Send, contentDescription = null, modifier = Modifier.size(16.dp))
                     Spacer(modifier = Modifier.width(8.dp))
                     Text("Chat with Owner")
+                }
+            } else if (booking.status == "COMPLETED") {
+                Spacer(modifier = Modifier.height(16.dp))
+                if (booking.hasReview == true) {
+                    Text(
+                        text = "✓ Reviewed",
+                        color = Color(0xFF4CAF50),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp,
+                        modifier = Modifier.align(Alignment.End)
+                    )
+                } else {
+                    Button(
+                        onClick = onReviewClick,
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(8.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50))
+                    ) {
+                        Text("Review Item", color = Color.White, fontWeight = FontWeight.Bold)
+                    }
                 }
             }
         }
