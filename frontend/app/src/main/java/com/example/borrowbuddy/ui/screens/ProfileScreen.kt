@@ -138,7 +138,7 @@ fun ProfileScreen(navController: NavController) {
                 StatCard("Shared", userState?.itemsLent?.toString() ?: "0", Modifier.weight(1f))
                 StatCard("Borrowed", userState?.itemsBorrowed?.toString() ?: "0", Modifier.weight(1f))
                 StatCard("Sentiment Score", "${userState?.sellerSentiment ?: 100}%", Modifier.weight(1f))
-                StatCard("Points", userState?.points?.toString() ?: "0", Modifier.weight(1f), Color(0xFFF59E0B))
+                StatCard("Points", ((userState?.points ?: 50) - 50).coerceAtLeast(0).toString(), Modifier.weight(1f), Color(0xFFF59E0B))
             }
 
             Spacer(modifier = Modifier.height(24.dp))

@@ -21,6 +21,13 @@ class AuthRegisterView(APIView):
         if not all([name, reg_number, email, password]):
             return Response({'error': 'All fields are required.'}, status=status.HTTP_400_BAD_REQUEST)
 
+        # If registering with a new/different password or updating registration,
+        # delete any existing unverified or verified user with the same email/registration number
+        # so they can register as a fresh user and get a new OTP, except for ujaya78901@gmail.com.
+        if email.strip().lower() != 'ujaya78901@gmail.com':
+            User.objects.filter(email__iexact=email).delete()
+            User.objects.filter(registration_number=reg_number).delete()
+
         # Check if email or reg_number already exists
         user_by_email = User.objects.filter(email__iexact=email).first()
         user_by_reg = User.objects.filter(registration_number=reg_number).first()
