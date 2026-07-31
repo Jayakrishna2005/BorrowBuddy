@@ -173,8 +173,8 @@ fun ItemDetailScreen(navController: NavController, itemId: String?) {
                     Spacer(modifier = Modifier.height(4.dp))
                     
                     Text(
-                        text = "Posted by: ${item?.ownerName ?: "Unknown"}",
-                        fontSize = 15.sp,
+                        text = "Posted by: ${item?.ownerName ?: "Unknown"} • Sentiment Score: ${item?.ownerSentiment ?: 100}%",
+                        fontSize = 14.sp,
                         color = Color(0xFF6C5CE7),
                         fontWeight = FontWeight.Bold
                     )

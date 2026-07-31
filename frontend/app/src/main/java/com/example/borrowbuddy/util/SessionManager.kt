@@ -20,6 +20,7 @@ class SessionManager(context: Context) {
         editor.putInt("USER_POINTS", user.points)
         editor.putInt("USER_LEVEL", user.level)
         editor.putString("USER_BADGE", user.badge)
+        editor.putInt("USER_SELLER_SENTIMENT", user.sellerSentiment ?: 100)
         editor.apply()
     }
 
@@ -42,6 +43,7 @@ class SessionManager(context: Context) {
         val points = prefs.getInt("USER_POINTS", 0)
         val level = prefs.getInt("USER_LEVEL", 1)
         val badge = prefs.getString("USER_BADGE", "Novice")
+        val sellerSentiment = prefs.getInt("USER_SELLER_SENTIMENT", 100)
 
         if (idString != null && fullName != null) {
             return User(
@@ -54,7 +56,8 @@ class SessionManager(context: Context) {
                 email = email,
                 points = points,
                 level = level,
-                badge = badge
+                badge = badge,
+                sellerSentiment = sellerSentiment
             )
         }
         return null

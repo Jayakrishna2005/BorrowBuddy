@@ -15,7 +15,9 @@ data class User(
     val profilePhoto: String? = null,
     val points: Int = 0,
     val level: Int = 1,
-    val badge: String? = "Novice"
+    val badge: String? = "Novice",
+    @SerializedName("sellerSentiment")
+    val sellerSentiment: Int? = 100
 )
 
 data class Item(
@@ -39,7 +41,9 @@ data class Item(
     val averageRating: Float = 0f,
     @SerializedName("reviews_count")
     val reviewsCount: Int = 0,
-    val reviews: List<Review>? = null
+    val reviews: List<Review>? = null,
+    @SerializedName("owner_sentiment")
+    val ownerSentiment: Int? = 100
 )
 
 data class Review(

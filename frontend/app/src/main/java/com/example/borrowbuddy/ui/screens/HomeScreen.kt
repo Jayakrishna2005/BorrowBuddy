@@ -438,7 +438,7 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = viewMode
             ) {
                 StatCard("Shared", user?.itemsLent?.toString() ?: "0", modifier = Modifier.weight(1f))
                 StatCard("Borrowed", user?.itemsBorrowed?.toString() ?: "0", modifier = Modifier.weight(1f))
-                StatCard("Trust", "${user?.trustScore ?: 0.0f}★", modifier = Modifier.weight(1f))
+                StatCard("Sentiment Score", "${user?.sellerSentiment ?: 100}%", modifier = Modifier.weight(1f))
             }
             Spacer(modifier = Modifier.height(32.dp))
         }
