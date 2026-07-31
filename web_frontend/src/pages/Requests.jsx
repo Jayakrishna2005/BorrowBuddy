@@ -8,6 +8,9 @@ function Requests({ user, refreshUser }) {
   const [activeTab, setActiveTab] = useState('received');
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const [reviewModalBooking, setReviewModalBooking] = useState(null);
+  const [rating, setRating] = useState(5);
+  const [comment, setComment] = useState('');
 
 
 
@@ -62,6 +65,40 @@ function Requests({ user, refreshUser }) {
       }
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const handleSubmitReview = async () => {
+    if (!comment.trim()) {
+      alert("Please write a comment for the review.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/reviews/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          booking: reviewModalBooking.id,
+          item: reviewModalBooking.item,
+          reviewer: user.id,
+          rating: rating,
+          comment: comment.trim()
+        })
+      });
+
+      if (response.ok) {
+        alert("Review submitted successfully! Trust score updated.");
+        setReviewModalBooking(null);
+        fetchRequests();
+        if (refreshUser) refreshUser();
+      } else {
+        const errorData = await response.json();
+        alert(`Failed to submit review: ${errorData.error || 'Unknown error'}`);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Network error. Failed to submit review.");
     }
   };
 
@@ -126,6 +163,25 @@ function Requests({ user, refreshUser }) {
             </button>
           )}
 
+          {/* Borrower Actions */}
+          {!isOwner && booking.status === 'COMPLETED' && !booking.has_review && (
+            <button 
+              className="btn btn-primary" 
+              onClick={() => {
+                setRating(5);
+                setComment('');
+                setReviewModalBooking(booking);
+              }}
+              style={{ background: 'var(--success)' }}
+            >
+              Review Item
+            </button>
+          )}
+          {!isOwner && booking.status === 'COMPLETED' && booking.has_review && (
+            <span style={{ color: 'var(--success)', fontWeight: 'bold', fontSize: '0.9rem', display: 'flex', alignItems: 'center' }}>
+              ✓ Reviewed
+            </span>
+          )}
 
         </div>
       </div>
@@ -172,8 +228,60 @@ function Requests({ user, refreshUser }) {
             </div>
           )}
         </div>
-      )}
+      )}      {reviewModalBooking && (
+        <div className="fade-in" style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.8)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }} onClick={() => setReviewModalBooking(null)}>
+          <div style={{ background: 'var(--glass-bg)', backdropFilter: 'blur(16px)', padding: '2rem', borderRadius: '24px', width: '100%', maxWidth: '450px', border: '1px solid var(--glass-border)' }} onClick={e => e.stopPropagation()}>
+            <h3 style={{ marginBottom: '0.5rem', color: 'var(--text-main)', fontSize: '1.4rem', fontWeight: 'bold', textAlign: 'center' }}>Review Item</h3>
+            <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', textAlign: 'center', fontSize: '0.95rem' }}>
+              How was your experience borrowing <strong style={{ color: 'var(--text-main)' }}>{reviewModalBooking.item_name}</strong>?
+            </p>
+            
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
+              {[1, 2, 3, 4, 5].map(star => (
+                <span 
+                  key={star} 
+                  onClick={() => setRating(star)} 
+                  style={{ 
+                    fontSize: '2.5rem', 
+                    cursor: 'pointer', 
+                    color: star <= rating ? '#FFB400' : 'rgba(0,0,0,0.1)',
+                    textShadow: star <= rating ? '0 0 10px rgba(255, 180, 0, 0.4)' : 'none',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  ★
+                </span>
+              ))}
+            </div>
 
+            <textarea 
+              placeholder="Write a comment about the item's condition, utility, or owner..." 
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              rows={4}
+              required
+              style={{ marginBottom: '1.5rem', resize: 'none' }}
+            />
+
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <button 
+                onClick={() => setReviewModalBooking(null)} 
+                className="btn" 
+                style={{ flex: 1, background: 'rgba(0,0,0,0.05)', color: 'var(--text-main)', border: '1px solid rgba(0,0,0,0.1)' }}
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleSubmitReview} 
+                className="btn btn-primary" 
+                style={{ flex: 1 }}
+              >
+                Submit Review
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

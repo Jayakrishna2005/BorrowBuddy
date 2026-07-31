@@ -409,20 +409,17 @@ class ReviewCreateView(APIView):
             item = review.item
             owner = item.owner
             if owner:
-                # Average all reviews for items owned by this user
-                all_reviews = Review.objects.filter(item__owner=owner)
-                if all_reviews.exists():
-                    from django.db.models import Avg
-                    avg_rating = all_reviews.aggregate(Avg('rating'))['rating__avg']
-                    # No longer overriding the trust score with just 1-5 rating
-                
-                # Bonus points for 5-star review
+                # Bonus points and trust score for 5-star review
                 if review.rating == 5:
                     owner.points += 20
                     owner.trust_score += 5.0
-                    # Check for level up
-                    owner.update_level_based_on_points()
                 
+                # Additional 1 point to the trust score for good reviews (rating >= 4)
+                if review.rating >= 4:
+                    owner.trust_score += 1.0
+                
+                # Check for level up
+                owner.update_level_based_on_points()
                 owner.save()
             
             return Response(serializer.data, status=status.HTTP_201_CREATED)
