@@ -127,8 +127,10 @@ function Home({ user }) {
             <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Borrowed</div>
           </div>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--success)' }}>{profileData?.trustScore || 0}★</div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Trust Score</div>
+            <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--success)' }}>
+              {profileData?.sellerSentiment !== undefined ? `${profileData.sellerSentiment}%` : '100%'}
+            </div>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Seller Sentiment</div>
           </div>
         </div>
       </div>
@@ -383,10 +385,16 @@ function Home({ user }) {
             </div>
 
             {/* Details Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem', background: 'rgba(0,0,0,0.02)', padding: '1rem', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', background: 'rgba(0,0,0,0.02)', padding: '1rem', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
               <div>
                 <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Owner</span>
                 <p style={{ margin: 0, fontWeight: 'bold', color: 'var(--text-main)' }}>{selectedDetailItem.owner_name}</p>
+              </div>
+              <div>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Owner Sentiment</span>
+                <p style={{ margin: 0, fontWeight: 'bold', color: 'var(--primary)' }}>
+                  {selectedDetailItem.owner_sentiment !== undefined ? `${selectedDetailItem.owner_sentiment}%` : '100%'}
+                </p>
               </div>
               <div>
                 <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Status</span>

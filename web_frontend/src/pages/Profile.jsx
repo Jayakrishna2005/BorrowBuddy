@@ -81,8 +81,10 @@ function Profile({ user, setUser }) {
           <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Borrowed</div>
         </div>
         <div className="glass-card" style={{ flex: 1, padding: '1.5rem', textAlign: 'center' }}>
-          <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--primary)' }}>{profileData?.trustScore || 0}★</div>
-          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Trust</div>
+          <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--primary)' }}>
+            {profileData?.sellerSentiment !== undefined ? `${profileData.sellerSentiment}%` : '100%'}
+          </div>
+          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Sentiment</div>
         </div>
         <div className="glass-card" style={{ flex: 1, padding: '1.5rem', textAlign: 'center' }}>
           <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#f59e0b' }}>{profileData?.points || 0}</div>

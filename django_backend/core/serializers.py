@@ -10,10 +10,11 @@ class UserSerializer(serializers.ModelSerializer):
     points = serializers.IntegerField(read_only=True)
     level = serializers.IntegerField(read_only=True)
     badge = serializers.SerializerMethodField()
+    sellerSentiment = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ['id', 'email', 'fullName', 'registrationNumber', 'trustScore', 'itemsLent', 'itemsBorrowed', 'points', 'level', 'badge', 'profile_photo']
+        fields = ['id', 'email', 'fullName', 'registrationNumber', 'trustScore', 'itemsLent', 'itemsBorrowed', 'points', 'level', 'badge', 'profile_photo', 'sellerSentiment']
 
     def get_badge(self, obj):
         level = obj.level
@@ -22,6 +23,9 @@ class UserSerializer(serializers.ModelSerializer):
         if level == 3: return "Rising Star"
         if level == 2: return "Helper"
         return "Novice"
+
+    def get_sellerSentiment(self, obj):
+        return obj.get_seller_sentiment_percentage()
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -35,6 +39,7 @@ class ItemSerializer(serializers.ModelSerializer):
     owner_trust_score = serializers.SerializerMethodField()
     owner_level = serializers.SerializerMethodField()
     owner_badge = serializers.SerializerMethodField()
+    owner_sentiment = serializers.SerializerMethodField()
     reviews = serializers.SerializerMethodField()
 
     def get_category_name(self, obj):
@@ -62,6 +67,9 @@ class ItemSerializer(serializers.ModelSerializer):
         if level == 2: return "Helper"
         return "Novice"
     
+    def get_owner_sentiment(self, obj):
+        return obj.owner.get_seller_sentiment_percentage() if obj.owner else 100
+
     def get_reviews(self, obj):
         reviews = obj.reviews.all().order_by('-created_at')
         return ReviewSerializer(reviews, many=True).data
@@ -71,7 +79,7 @@ class ItemSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'title', 'description', 'condition', 'is_available', 
             'max_borrow_days', 'quantity', 'category_name', 'owner_id', 'owner_name', 
-            'owner_trust_score', 'owner_level', 'owner_badge',
+            'owner_trust_score', 'owner_level', 'owner_badge', 'owner_sentiment',
             'image', 'category', 'owner', 'average_rating', 'reviews_count', 'reviews'
         ]
 

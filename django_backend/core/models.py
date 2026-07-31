@@ -30,6 +30,47 @@ class User(models.Model):
         else:
             self.level = 1
 
+    def get_seller_sentiment_percentage(self):
+        reviews = Review.objects.filter(item__owner=self)
+        if not reviews.exists():
+            return 100 # Default to 100% for no reviews
+        
+        total_sentiment = 0.0
+        count = 0
+        
+        pos_words = {"good", "great", "excellent", "perfect", "awesome", "nice", "friendly", "helpful", "clean", "smooth", "happy", "love", "thanks", "thank", "kind", "best"}
+        neg_words = {"bad", "poor", "broken", "dirty", "late", "worst", "unhelpful", "rude", "hard", "difficult", "scratch", "damage", "damaged", "fail", "failed"}
+        
+        for r in reviews:
+            # Base sentiment score from star rating
+            if r.rating == 5:
+                score = 100.0
+            elif r.rating == 4:
+                score = 80.0
+            elif r.rating == 3:
+                score = 50.0
+            elif r.rating == 2:
+                score = 20.0
+            else:
+                score = 0.0
+            
+            # Simple lexicon comment analysis
+            comment_lower = (r.comment or "").lower()
+            words = comment_lower.split()
+            for w in words:
+                w_clean = w.strip(".,!?;:()\"'")
+                if w_clean in pos_words:
+                    score += 5.0
+                elif w_clean in neg_words:
+                    score -= 10.0
+            
+            # Clamp to [0, 100]
+            score = max(0.0, min(100.0, score))
+            total_sentiment += score
+            count += 1
+            
+        return round(total_sentiment / count)
+
 
 class Category(models.Model):
     name = models.CharField(max_length=255)

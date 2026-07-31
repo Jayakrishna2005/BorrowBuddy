@@ -49,7 +49,7 @@ function Leaderboard({ user, setUser }) {
               <div>User</div>
               <div style={{ textAlign: 'center' }}>Level</div>
               <div style={{ textAlign: 'center' }}>Points</div>
-              <div style={{ textAlign: 'center' }}>Trust</div>
+              <div style={{ textAlign: 'center' }}>Sentiment</div>
             </div>
             
             {users.map((u, index) => {
@@ -80,7 +80,9 @@ function Leaderboard({ user, setUser }) {
                   </div>
                   <div style={{ textAlign: 'center', color: 'var(--primary)', fontWeight: 'bold' }}>Lvl {u.level}</div>
                   <div style={{ textAlign: 'center', color: 'var(--secondary)' }}>{u.points}</div>
-                  <div style={{ textAlign: 'center', color: 'var(--success)' }}>{u.trustScore}</div>
+                  <div style={{ textAlign: 'center', color: 'var(--success)', fontWeight: 'bold' }}>
+                    {u.sellerSentiment !== undefined ? `${u.sellerSentiment}%` : '100%'}
+                  </div>
                 </div>
               );
             })}
