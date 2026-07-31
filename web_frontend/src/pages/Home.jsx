@@ -252,7 +252,7 @@ function Home({ user }) {
       )}
 
       {quantityModalItem && (
-        <div className="fade-in" style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.8)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }} onClick={() => setQuantityModalItem(null)}>
+        <div className="fade-in" style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(15, 23, 42, 0.3)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }} onClick={() => setQuantityModalItem(null)}>
           <div style={{ background: 'var(--glass-bg)', backdropFilter: 'blur(16px)', padding: '2rem', borderRadius: '24px', width: '100%', maxWidth: '400px', border: '1px solid var(--glass-border)', textAlign: 'center' }} onClick={e => e.stopPropagation()}>
             <h3 style={{ marginBottom: '0.5rem', color: 'var(--text-main)' }}>Select Quantity</h3>
             <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>How many of <strong style={{ color: 'var(--text-main)' }}>{quantityModalItem.title}</strong> do you need?</p>
@@ -329,7 +329,7 @@ function Home({ user }) {
       )}
 
       {similarModalItem && (
-        <div className="fade-in" style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.8)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }} onClick={() => setSimilarModalItem(null)}>
+        <div className="fade-in" style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(15, 23, 42, 0.3)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }} onClick={() => setSimilarModalItem(null)}>
           <div style={{ background: 'var(--glass-bg)', backdropFilter: 'blur(16px)', padding: '2rem', borderRadius: '24px', width: '100%', maxWidth: '600px', border: '1px solid var(--glass-border)' }} onClick={e => e.stopPropagation()}>
             <h3 style={{ marginBottom: '1rem' }}>Similar Available Items</h3>
             <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>Other {similarModalItem.category_name} you might like:</p>
@@ -354,7 +354,7 @@ function Home({ user }) {
       )}
 
       {selectedDetailItem && (
-        <div className="fade-in" style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.8)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }} onClick={() => setSelectedDetailItem(null)}>
+        <div className="fade-in" style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(15, 23, 42, 0.3)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }} onClick={() => setSelectedDetailItem(null)}>
           <div style={{ background: 'var(--glass-bg)', backdropFilter: 'blur(16px)', padding: '2.5rem', borderRadius: '24px', width: '100%', maxWidth: '650px', border: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', gap: '1.5rem', maxHeight: '90vh', overflowY: 'auto' }} onClick={e => e.stopPropagation()}>
             
             {/* Header / Title */}
@@ -383,7 +383,7 @@ function Home({ user }) {
             </div>
 
             {/* Details Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem', background: 'rgba(0,0,0,0.02)', padding: '1rem', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
               <div>
                 <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Owner</span>
                 <p style={{ margin: 0, fontWeight: 'bold', color: 'var(--text-main)' }}>{selectedDetailItem.owner_name}</p>
@@ -397,10 +397,6 @@ function Home({ user }) {
               <div>
                 <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Available Quantity</span>
                 <p style={{ margin: 0, fontWeight: 'bold', color: 'var(--text-main)' }}>{selectedDetailItem.quantity}</p>
-              </div>
-              <div>
-                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Max Borrow Days</span>
-                <p style={{ margin: 0, fontWeight: 'bold', color: 'var(--text-main)' }}>{selectedDetailItem.max_borrow_days || 7} days</p>
               </div>
             </div>
 
